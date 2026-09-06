@@ -9,10 +9,6 @@
    ============================================= */
 
 :root {
-  /* ✨ Glass & Blur */
-  --utopia-glass: blur(32px) saturate(140%) !important;
-  --utopia-color-glass: light-dark(rgb(255 255 255 / 40%), rgb(0 0 0 / 40%)) !important;
-
   /* 🎨 UI & Website Tint */
   --utopia-ui-tint: light-dark(rgb(255 255 255 / 20%), rgba(0, 0, 0, 0)) !important;
   --utopia-website-tint: light-dark(rgb(255 255 255 / 0%), rgb(0 0 0 / 0%)) !important;
@@ -23,12 +19,19 @@
      à la racine du workspace. On le garde, mais c'est nous qui contrôlons sa valeur. */
   --utopia-browser-veil: light-dark(rgb(255 255 255 / 0%), rgba(251, 251, 251, 0.1)) !important;
 
-  /* 🔮 Colors (semi-transparent) */
-  --utopia-color-min: light-dark(rgb(255 255 255 / 10%), rgb(0 0 0 / 20%)) !important;
+  /* 🔮 Glass (statuspanel §7) */
+  --utopia-color-glass: light-dark(rgb(255 255 255 / 40%), rgb(0 0 0 / 40%)) !important;
   --utopia-color: light-dark(rgb(255 255 255 / 25%), rgb(0 0 0 / 35%)) !important;
-  --utopia-color-hover: light-dark(rgb(255 255 255 / 35%), rgb(0 0 0 / 45%)) !important;
-  --utopia-color-selected: light-dark(rgb(255 255 255 / 45%), rgb(0 0 0 / 55%)) !important;
   --utopia-color-shadow: light-dark(rgb(255 255 255 / 5.5%), rgb(0 0 0 / 55%)) !important;
+
+  /* 🗂 États des tabs — dark-only, valeurs directes (spec 06/09)
+     Classique/pinned : idle transparent, hover 3%, actif 10%
+     Essential : idle 3%, hover 5%, actif 10% */
+  --utopia-tab-hover: rgb(255 255 255 / 3%) !important;
+  --utopia-tab-active: rgb(255 255 255 / 10%) !important;
+  --utopia-essential-idle: rgb(255 255 255 / 3%) !important;
+  --utopia-essential-hover: rgb(255 255 255 / 5%) !important;
+  --utopia-essential-active: rgb(255 255 255 / 10%) !important;
 }
 
 /* =============================================
@@ -290,36 +293,85 @@ html[utopia-single-toolbar][utopia-compact-mode] #titlebar {
 }
 
 /* =============================================
-   §6  TAB BACKGROUNDS (semi-transparent)
+   §6  TAB BACKGROUNDS (classique & pinned)
+   Pattern éprouvé (ex-Custom.css) : chemin complet
+   .tab-stack .tab-background + :not([zen-essential])
+   → bat le CSS natif sur les tabs sélectionnés.
    ============================================= */
 
-.tabbrowser-tab {
-  .tab-background {
-    position: relative !important;
-    box-shadow: 0 0 3px transparent !important;
-    transition:
-      background-color 0.3s ease,
-      box-shadow 0.3s ease !important;
-  }
+/* Base commune à TOUS les tabs (essentials inclus — le §6b
+   surcharge la couleur via son préfixe container plus spécifique) */
+.tabbrowser-tab .tab-stack .tab-background {
+  position: relative !important;
+  background-color: transparent !important;
+  box-shadow: 0 0 3px transparent !important;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease !important;
+}
 
-  /* Pinned tabs */
-  &[pinned] .tab-background {
-    background-color: var(--utopia-color-min) !important;
-  }
+/* Idle (non-essentials) : la base transparent ci-dessus fait le job. */
 
-  /* Hover state */
-  &:is([pinned], :not([pinned])):hover .tab-background {
-    /* background-color: var(--utopia-color-hover) !important; */
-    background-color: var(--utopia-color-min) !important;
-    /* box-shadow: 0 0 3px var(--utopia-color-shadow) !important; */
-  }
+/* Hover (non actif) */
+.tabbrowser-tab:not([zen-essential='true']):hover .tab-stack .tab-background {
+  background-color: var(--utopia-tab-hover) !important;
+}
 
-  /* Selected state */
-  &:is([pinned], :not([pinned])):is([selected='true'], [visuallyselected='true']) .tab-background {
-    /* background-color: var(--utopia-color-selected) !important; */
-    background-color: var(--utopia-color-min) !important;
-    /* box-shadow: 0 0 3px var(--utopia-color-shadow) !important; */
-  }
+/* Actif + actif hover (attribut supplémentaire → plus spécifique
+   que le hover → l'actif hover reste à 10%).
+   ⚠️ Zen pose `selected` en attribut booléen VIDE (`selected=""`),
+   pas `selected="true"` (prouvé en console 06/09) → on matche la
+   PRÉSENCE, pas la valeur. Shorthand `background` pour reset un
+   éventuel background-image natif par-dessus. */
+.tabbrowser-tab:not([zen-essential='true']):is([selected], [visuallyselected]) .tab-stack .tab-background {
+  background: var(--utopia-tab-active) !important;
+}
+
+/* Pseudos natifs du tab sélectionné (::before/::after peuvent
+   peindre un calque par-dessus le .tab-background) */
+.tabbrowser-tab:is([selected], [visuallyselected]) .tab-stack .tab-background::before,
+.tabbrowser-tab:is([selected], [visuallyselected]) .tab-stack .tab-background::after {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* =============================================
+   §6b ESSENTIALS — états dédiés (spéc 06/09)
+   Idle 3% / hover 5% / actif 10%. Même pattern que §6
+   (.tab-stack .tab-background) + préfixe container :
+   le §6b gagne sur §6 quel que soit l'ordre.
+   ============================================= */
+
+/* Idle */
+.zen-essentials-container .tabbrowser-tab .tab-stack .tab-background {
+  background-color: var(--utopia-essential-idle) !important;
+}
+
+/* Hover (non actif) */
+.zen-essentials-container .tabbrowser-tab:hover .tab-stack .tab-background {
+  background-color: var(--utopia-essential-hover) !important;
+}
+
+/* Actif + actif hover — présence d'attribut (cf §6) + shorthand
+   `background` (reset le gradient natif de sélection) */
+.zen-essentials-container .tabbrowser-tab:is([selected], [visuallyselected]) .tab-stack .tab-background {
+  background: var(--utopia-essential-active) !important;
+}
+
+/* Favicons essentials plus grands — les autres tabs restent à 24px
+   (règle .tab-icon-image de MyCss/Custom.css, inchangée) */
+.zen-essentials-container .tabbrowser-tab .tab-icon-image {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+/* Cellule essentials (wrap Custom.css surchargé, :root pour la
+   spécificité) + column-gap grid natif annulé (dérivé de
+   --zen-toolbox-padding par défaut — pattern marketplace ad97bb70).
+   row-gap laissé natif : on ne resserre que l'horizontal. */
+:root .zen-essentials-container {
+  --min-essentials-width-wrap: calc(var(--tab-min-height) + 0px) !important;
+  column-gap: 0px !important;
 }
 
 /* =============================================
