@@ -28,10 +28,10 @@
      Classique/pinned : idle transparent, hover 3%, actif 10%
      Essential : idle 3%, hover 5%, actif 10% */
   --utopia-tab-hover: rgb(255 255 255 / 3%) !important;
-  --utopia-tab-active: rgb(255 255 255 / 10%) !important;
+  --utopia-tab-active: rgb(255 255 255 / 15%) !important;
   --utopia-essential-idle: rgb(255 255 255 / 3%) !important;
   --utopia-essential-hover: rgb(255 255 255 / 5%) !important;
-  --utopia-essential-active: rgb(255 255 255 / 10%) !important;
+  --utopia-essential-active: rgb(255 255 255 / 15%) !important;
 }
 
 /* =============================================
@@ -372,6 +372,37 @@ html[utopia-single-toolbar][utopia-compact-mode] #titlebar {
 :root .zen-essentials-container {
   --min-essentials-width-wrap: calc(var(--tab-min-height) + 0px) !important;
   column-gap: 0px !important;
+}
+
+/* =============================================
+   §6c TAB FOLDERS (zen-folder) — états statiques
+   Mêmes valeurs que les essentials (spéc 06/09) :
+   fermé idle 3% / hover 5% / OUVERT 10%.
+   ⚠️ Le fond du folder est peint par le ::before du
+   .tab-group-label-container (les réglages géométriques
+   chirurgicaux — width/top/bottom — restent dans
+   MyCss/Custom.css).
+   ⚠️ `collapsed` est un attribut booléen VIDE posé quand le
+   folder est FERMÉ (prouvé console 06/09) → ouvert =
+   absence : :not([collapsed]).
+   ============================================= */
+
+/* Idle (fermé) */
+zen-folder > .tab-group-label-container::before {
+  border: 1px solid transparent !important;
+  background: var(--utopia-essential-idle) !important;
+  transition: background 0.3s ease !important;
+}
+
+/* Hover (fermé, non ouvert) */
+zen-folder[collapsed]:hover > .tab-group-label-container::before {
+  background: var(--utopia-essential-hover) !important;
+}
+
+/* OUVERT (+ hover ouvert — déclaré après : gagne à spécificité
+   égale, le folder ouvert reste à 10% au survol) */
+zen-folder:not([collapsed]) > .tab-group-label-container::before {
+  background: var(--utopia-essential-active) !important;
 }
 
 /* =============================================
