@@ -2,7 +2,7 @@
 // @name           utopia.uc.js
 // @description    Transparency engine for Utopia — pseudo-backgrounds & gradient slider
 // @author         Impre (lineage: Nebula by JustADumbPrsn → Nebula-Fork → Utopia)
-// @version        0.1.0
+// @version        0.1.1
 // @include        main
 // @grant          none
 // ==/UserScript==
