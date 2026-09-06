@@ -1,0 +1,342 @@
+/* ============================================
+   Utopia — Transparency Only
+   Lineage: Nebula (JustADumbPrsn) → Nebula-Fork → Utopia
+   Keeps: glass, blur, transparent backgrounds
+   ============================================ */
+
+/* =============================================
+   §1  CONFIG VARIABLES
+   ============================================= */
+
+:root {
+  /* ✨ Glass & Blur */
+  --utopia-glass: blur(32px) saturate(140%) !important;
+  --utopia-color-glass: light-dark(rgb(255 255 255 / 40%), rgb(0 0 0 / 40%)) !important;
+
+  /* 🎨 UI & Website Tint */
+  --utopia-ui-tint: light-dark(rgb(255 255 255 / 20%), rgb(0 0 0 / 20%)) !important;
+  --utopia-website-tint: light-dark(rgb(255 255 255 / 0%), rgb(0 0 0 / 0%)) !important;
+
+  /* 🌑 Browser veil — voile natif Zen (#zen-browser-background::before/::after)
+     qui assombrit toute la fenêtre sous les thèmes transparents.
+     Découvert le 04/09 après 4h de chasse — cf POST-MORTEM-voile-zen-browser-background.md
+     à la racine du workspace. On le garde, mais c'est nous qui contrôlons sa valeur. */
+  --utopia-browser-veil: light-dark(rgb(255 255 255 / 0%), rgb(0 0 0 / 40%)) !important;
+
+  /* 🔮 Colors (semi-transparent) */
+  --utopia-color-min: light-dark(rgb(255 255 255 / 10%), rgb(0 0 0 / 20%)) !important;
+  --utopia-color: light-dark(rgb(255 255 255 / 25%), rgb(0 0 0 / 35%)) !important;
+  --utopia-color-hover: light-dark(rgb(255 255 255 / 35%), rgb(0 0 0 / 45%)) !important;
+  --utopia-color-selected: light-dark(rgb(255 255 255 / 45%), rgb(0 0 0 / 55%)) !important;
+  --utopia-color-shadow: light-dark(rgb(255 255 255 / 5.5%), rgb(0 0 0 / 55%)) !important;
+}
+
+/* =============================================
+   §2  CORE TRANSPARENCY
+   ============================================= */
+
+/* Main UI tint */
+#zen-main-app-wrapper {
+  background: var(--utopia-ui-tint) !important;
+}
+
+/* Website background tint */
+browser[transparent='true'] {
+  background: var(--utopia-website-tint) !important;
+}
+
+/* 🌑 Native Zen browser veil — override pour prendre le contrôle
+   (valeur d'origine : rgba(0,0,0,0.4) en dur dans le CSS natif) */
+#zen-browser-background::before,
+#zen-browser-background::after {
+  background: var(--utopia-browser-veil) !important;
+}
+
+/* Global overrides for transparency */
+:root {
+  --attention-dot-color: transparent !important;
+  --zen-themed-toolbar-bg-transparent: transparent !important;
+}
+
+:root[utopia-zen-gradient-contrast-zero] {
+  --zen-main-browser-background: transparent !important;
+}
+
+/* Required for blur rendering */
+browser {
+  transform: translateZ(0);
+}
+
+/* =============================================
+   §3  SIDEBAR / TITLEBAR TRANSPARENCY
+   ============================================= */
+
+/* --- Titlebar pseudo-elements (transparent base) --- */
+
+#navigator-toolbox:not([animate='true']) {
+  #titlebar {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      pointer-events: none;
+      outline: 0 !important;
+      z-index: -1;
+      background: transparent !important;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+      background: transparent !important;
+      opacity: var(--zen-grainy-background-opacity, 0);
+      mix-blend-mode: overlay;
+    }
+  }
+}
+
+/* --- JS-created pseudo-background behind titlebar --- */
+
+#Utopia-titlebar-background {
+  position: absolute;
+  z-index: -100000;
+  pointer-events: none;
+  opacity: 0;
+  background-color: light-dark(rgb(200 200 200 / 100%), rgb(30 30 30 / 100%));
+}
+
+#Utopia-titlebar-background.visible {
+  opacity: 0;
+}
+
+/* --- Titlebar theming (transparent base) --- */
+
+/* Kill ALL dark backgrounds on the toolbar background element */
+.zen-toolbar-background::before,
+.zen-toolbar-background::after {
+  outline: none !important;
+  background-color: transparent !important;
+}
+
+#zen-toolbar-background,
+.zen-toolbar-background {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+:root[zen-right-side='true'][utopia-compact-mode] #titlebar {
+  left: auto !important;
+  right: var(--zen-element-separation) !important;
+}
+
+/* --- Compact mode visibility handling --- */
+
+@media (-moz-pref('zen.view.compact.hide-toolbar')) {
+  @media not all and (-moz-pref('zen.view.compact.hide-tabbar')) {
+    #Utopia-titlebar-background {
+      opacity: 0 !important;
+    }
+  }
+}
+
+/* --- Single toolbar mode --- */
+
+html[utopia-single-toolbar][utopia-compact-mode] #titlebar {
+  top: var(--zen-element-separation) !important;
+  left: var(--zen-element-separation) !important;
+  height: calc(100% - (var(--zen-element-separation) * 2)) !important;
+}
+
+/* --- Multi & collapsed toolbar --- */
+
+@media (-moz-pref('zen.view.compact.hide-tabbar')) {
+  html[utopia-multi-toolbar][utopia-compact-mode] #titlebar,
+  html[utopia-collapsed-toolbar][utopia-compact-mode] #titlebar {
+    top: var(--zen-element-separation) !important;
+    left: var(--zen-element-separation) !important;
+    height: calc(100% - (var(--zen-element-separation) * 2)) !important;
+  }
+
+  html[utopia-multi-toolbar]:root[zen-right-side='true'][utopia-compact-mode] #titlebar {
+    left: auto !important;
+    right: var(--zen-element-separation) !important;
+  }
+
+  html[utopia-collapsed-toolbar]:root[zen-right-side='true'][utopia-compact-mode] #titlebar {
+    left: auto !important;
+    right: calc(var(--zen-element-separation) * 1.75) !important;
+  }
+}
+
+@media (-moz-pref('zen.view.compact.hide-toolbar')) {
+  @media not all and (-moz-pref('zen.view.compact.hide-tabbar')) {
+    html[utopia-multi-toolbar][utopia-compact-mode] #titlebar,
+    html[utopia-collapsed-toolbar][utopia-compact-mode] #titlebar {
+      background: none !important;
+      padding: 0 !important;
+      backdrop-filter: none !important;
+    }
+
+    html[utopia-multi-toolbar]:root[zen-right-side='true'][utopia-compact-mode] #titlebar,
+    html[utopia-collapsed-toolbar]:root[zen-right-side='true'][utopia-compact-mode] #titlebar {
+      left: auto !important;
+      right: unset !important;
+    }
+  }
+}
+
+@media (-moz-pref('zen.view.compact.hide-tabbar')) and (-moz-pref('zen.view.compact.hide-toolbar')) {
+  html[utopia-multi-toolbar][utopia-compact-mode] #titlebar,
+  html[utopia-collapsed-toolbar][utopia-compact-mode] #titlebar {
+    top: var(--zen-element-separation) !important;
+    left: var(--zen-element-separation) !important;
+    height: calc(100% - (var(--zen-element-separation) * 3)) !important;
+  }
+
+  html[utopia-multi-toolbar]:root[zen-right-side='true'][utopia-compact-mode] #titlebar {
+    left: auto !important;
+    right: var(--zen-element-separation) !important;
+  }
+
+  html[utopia-collapsed-toolbar]:root[zen-right-side='true'][utopia-compact-mode] #titlebar {
+    left: auto !important;
+    right: calc(var(--zen-element-separation) * 1.75) !important;
+  }
+}
+
+/* =============================================
+   §3b SIDEBAR GLASS EFFECT (compact hover)
+   ============================================= */
+
+html[utopia-compact-mode] {
+  /* Base transitions — toujours actives pour animation fluide entrée ET sortie.
+    Même pattern que Custom-v2.css (.browserStack base rule). */
+  .browserStack {
+    transition: all 0.3s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
+  }
+
+  #titlebar {
+    transition: all 0.3s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
+  }
+
+  /* Blur du contenu web quand la sidebar est hover.
+    brightness + blur + scale, comme l'urlbar de Custom-v2.css. */
+  #browser:has(#navigator-toolbox[zen-has-hover='true']) .browserStack {
+    scale: 1.075 !important;
+    filter: brightness(85%) blur(16px) saturate(140%) !important;
+  }
+
+  /* Glass panel sur le titlebar quand la sidebar est hover. */
+  #browser:has(#navigator-toolbox[zen-has-hover='true']) #titlebar {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(32px) saturate(1.4) !important;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 40px 0px !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+  }
+}
+
+/* =============================================
+   §4  SIDEBAR ITEMS TRANSPARENCY
+   ============================================= */
+
+/* Transparent Sidebar Items */
+.sidebar-panel {
+  background: transparent !important;
+}
+
+/* Clean & Transparent Sidebar Box */
+#sidebar-box {
+  background-color: light-dark(rgb(255 255 255 / 11%), rgb(0 0 0 / 20%)) !important;
+  border: none !important;
+}
+
+#sidebar-box #sidebar-header {
+  border-bottom: none !important;
+}
+
+#sidebar-search-container {
+  background-color: rgb(0 0 0 / 0%) !important;
+}
+
+#sidebar-header {
+  background-color: rgb(0 0 0 / 0%) !important;
+}
+
+/* Transparent Sidebar Search Box & View Button */
+#sidebar-search-container > #search-box,
+#viewButton {
+  padding: 4px 8px !important;
+  appearance: none !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+#sidebar-search-container > #search-box:hover,
+#viewButton:hover,
+#sidebar-search-container > #search-box:active,
+#viewButton:active {
+  background-color: rgb(255 255 255 / 10%) !important;
+}
+
+/* =============================================
+   §6  TAB BACKGROUNDS (semi-transparent)
+   ============================================= */
+
+.tabbrowser-tab {
+  .tab-background {
+    position: relative !important;
+    box-shadow: 0 0 3px transparent !important;
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease !important;
+  }
+
+  /* Pinned tabs */
+  &[pinned] .tab-background {
+    background-color: var(--utopia-color-min) !important;
+  }
+
+  /* Hover state */
+  &:is([pinned], :not([pinned])):hover .tab-background {
+    /* background-color: var(--utopia-color-hover) !important; */
+    background-color: var(--utopia-color-min) !important;
+    /* box-shadow: 0 0 3px var(--utopia-color-shadow) !important; */
+  }
+
+  /* Selected state */
+  &:is([pinned], :not([pinned])):is([selected='true'], [visuallyselected='true']) .tab-background {
+    /* background-color: var(--utopia-color-selected) !important; */
+    background-color: var(--utopia-color-min) !important;
+    /* box-shadow: 0 0 3px var(--utopia-color-shadow) !important; */
+  }
+}
+
+/* =============================================
+   §7  FLOATING STATUSBAR (glass)
+   ============================================= */
+
+#statuspanel {
+  margin: 12px !important;
+  pointer-events: none !important;
+}
+
+#statuspanel-label {
+  padding: 4px 12px !important;
+  font-size: 12.5px !important;
+  border: 1px solid var(--utopia-color) !important;
+  background: var(--utopia-color-glass) !important;
+  backdrop-filter: blur(8px) saturate(140%) !important;
+  box-shadow: 0 4px 14px var(--utopia-color-shadow) !important;
+}
+
+/* =============================================
+   §8  CTRL+TAB PANEL (glass)
+   ============================================= */
+
+/* ctrlTab : migré vers NavBtn (doctrine mods — plans/doctrine-mods.md).
+   Une feature = un propriétaire unique : NavBtn possède désormais
+   structure ET peau du switcher (overlays blur + coords fixées). */
