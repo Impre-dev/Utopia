@@ -20,7 +20,7 @@ sont du ballast hérité du fork (à nettoyer au fil de l'eau, pas une priorité
 | Version | Contenu | Commit |
 |---|---|---|
 | 0.1.0 | Fork initial : copie renommée de Nebula-Fork (`NebulaFork`→`Utopia`, `nebula-*`→`utopia-*` : attributs, vars CSS, ids overlays, log prefix). Cohabite avec Nebula-Fork (namespaces disjoints) pour A/B. Push squelette (code = copie du fork validé en runtime, renommage vérifié statiquement) ; validation visuelle = point 1 de la file. | `fab0167` |
-| 0.1.1 | Premier install validé (Sine UI + restart + rendu OK, cohabitation avec le fork). Réglages cœurs dark d'Impre : `--utopia-ui-tint` dark → `rgba(0,0,0,0)` (tint neutralisé) et `--utopia-browser-veil` dark → `rgba(251,251,251,0.1)` (voile blanc cassé au lieu du noir 40%). Validé visuellement en live. Contrainte actée : Utopia = dark-only. | `2b819b5` |
+| 0.1.1 | Premier install validé (Sine UI + restart + rendu OK, cohabitation avec le fork). Réglages cœurs dark d'Impre : `--utopia-ui-tint` dark → `rgba(0,0,0,0)` (tint neutralisé) et `--utopia-browser-veil` dark → `rgba(251,251,251,0.1)` (voile blanc cassé au lieu du noir 40%). Validé visuellement en live. Contrainte actée : Utopia = dark-only. | `f231445` |
 
 ## 🎯 File priorisée
 
