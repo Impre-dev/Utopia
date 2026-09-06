@@ -209,33 +209,40 @@ html[utopia-single-toolbar][utopia-compact-mode] #titlebar {
 
 /* =============================================
    §3b SIDEBAR GLASS EFFECT (compact hover)
+   Scopé aux modes compact où la sidebar se masque
+   (hide-tabbar : « masquer la barre latérale » et
+   « masquer les 2 »). En mode « masquer la barre
+   d'outils » la sidebar est permanente → l'effet
+   hover n'a pas de sens, on ne l'applique pas.
    ============================================= */
 
-html[utopia-compact-mode] {
-  /* Base transitions — toujours actives pour animation fluide entrée ET sortie.
-    Même pattern que Custom-v2.css (.browserStack base rule). */
-  .browserStack {
-    transition: all 0.3s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
-  }
+@media (-moz-pref('zen.view.compact.hide-tabbar')) {
+  html[utopia-compact-mode] {
+    /* Base transitions — toujours actives pour animation fluide entrée ET sortie.
+      Même pattern que Custom-v2.css (.browserStack base rule). */
+    .browserStack {
+      transition: all 0.3s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
+    }
 
-  #titlebar {
-    transition: all 0.3s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
-  }
+    #titlebar {
+      transition: all 0.3s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
+    }
 
-  /* Blur du contenu web quand la sidebar est hover.
-    brightness + blur + scale, comme l'urlbar de Custom-v2.css. */
-  #browser:has(#navigator-toolbox[zen-has-hover='true']) .browserStack {
-    scale: 1.075 !important;
-    filter: brightness(85%) blur(16px) saturate(140%) !important;
-  }
+    /* Blur du contenu web quand la sidebar est hover.
+      brightness + blur + scale, comme l'urlbar de Custom-v2.css. */
+    #browser:has(#navigator-toolbox[zen-has-hover='true']) .browserStack {
+      scale: 1.075 !important;
+      filter: brightness(85%) blur(16px) saturate(140%) !important;
+    }
 
-  /* Glass panel sur le titlebar quand la sidebar est hover. */
-  #browser:has(#navigator-toolbox[zen-has-hover='true']) #titlebar {
-    background-color: rgba(0, 0, 0, 0.4) !important;
-    backdrop-filter: blur(32px) saturate(1.4) !important;
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 40px 0px !important;
-    border-radius: 6px !important;
-    overflow: hidden !important;
+    /* Glass panel sur le titlebar quand la sidebar est hover. */
+    #browser:has(#navigator-toolbox[zen-has-hover='true']) #titlebar {
+      background-color: rgba(0, 0, 0, 0.4) !important;
+      backdrop-filter: blur(32px) saturate(1.4) !important;
+      box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 40px 0px !important;
+      border-radius: 6px !important;
+      overflow: hidden !important;
+    }
   }
 }
 

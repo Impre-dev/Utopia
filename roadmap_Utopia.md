@@ -21,6 +21,7 @@ sont du ballast hérité du fork (à nettoyer au fil de l'eau, pas une priorité
 |---|---|---|
 | 0.1.0 | Fork initial : copie renommée de Nebula-Fork (`NebulaFork`→`Utopia`, `nebula-*`→`utopia-*` : attributs, vars CSS, ids overlays, log prefix). Cohabite avec Nebula-Fork (namespaces disjoints) pour A/B. Push squelette (code = copie du fork validé en runtime, renommage vérifié statiquement) ; validation visuelle = point 1 de la file. | `fab0167` |
 | 0.1.1 | Premier install validé (Sine UI + restart + rendu OK, cohabitation avec le fork). Réglages cœurs dark d'Impre : `--utopia-ui-tint` dark → `rgba(0,0,0,0)` (tint neutralisé) et `--utopia-browser-veil` dark → `rgba(251,251,251,0.1)` (voile blanc cassé au lieu du noir 40%). Validé visuellement en live. Contrainte actée : Utopia = dark-only. | `f231445` |
+| 0.2.0 | Quête annexe : §3b (sidebar glass hover) scopé `@media (-moz-pref('zen.view.compact.hide-tabbar'))` — actif uniquement dans les modes compact à sidebar masquée (« masquer barre latérale », « masquer les 2 »), désactivé dans le combo cible où la sidebar est permanente. Validé visuellement les 2 états (mode courant + masquer-sidebar). | *(commit à venir)* |
 
 ## 🎯 File priorisée
 
@@ -54,3 +55,4 @@ sont du ballast hérité du fork (à nettoyer au fil de l'eau, pas une priorité
 2. **Zen expose ses prefs au CSS par 2 mécanismes** : attributs dynamiques sur `:root` (`zen-single-toolbar`, `zen-compact-mode`, `zen-sidebar-expanded`, `zen-right-side`) et media queries `@media (-moz-pref("..."))` (statiques, à l'install). Le combo des deux = scoping fiable.
 3. **`zen-compact-mode="true"` (attribut) ≠ `zen.view.compact.*` (prefs)** : l'attribut reflète l'état compact réellement actif (toggle dynamique), les prefs la configuration choisie. Scoper sur l'attribut pour réagir au toggle en live.
 4. **Nebula-Fork et Utopia cohabitent sans conflit** : attributs/vars/ids préfixés différemment (`nebula-*`/`utopia-*`), valeurs identiques → dernière définition chargée gagne sans casse. Validé par analyse 06/09 (validation runtime au point 1 de la file).
+5. **Discrimination des 3 modes compact par une seule pref** : « masquer la barre latérale » et « masquer les 2 » ont `zen.view.compact.hide-tabbar=true` ; seul « masquer la barre d'outils » l'a à `false` → un `@media (-moz-pref(...hide-tabbar))` suffit pour cibler « sidebar masquée/révélée au hover » vs « sidebar permanente ». Prouvé par validation 0.2.0 (06/09). Conséquence : BG-Zen (qui dépend du §3b via sa copie wallpaper hover) devra recevoir le même scoping à sa bascule vers utopia.
