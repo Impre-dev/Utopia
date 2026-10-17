@@ -567,6 +567,10 @@
     }
   }
 
+  // (UtopiaTitlebarCenterModule : retiré 06/09 — le centrage urlbar
+  // appartient désormais au mod dédié SmartSpacer (doctrine mods :
+  // une feature = un mod propriétaire unique). cf Sine-Mods/SmartSpacer.)
+
   // ========== Register Modules ==========
   Utopia.register(UtopiaPolyfillModule);
   Utopia.register(UtopiaGradientSliderModule);
